@@ -1,0 +1,12 @@
+{
+    "api": {
+        "port": 5000,
+        "database": "elasticsearch"
+    },
+    "datasources": {
+        "elasticsearch": {
+            "hosts": ["http://127.0.0.1:9200"],
+            "index": "api_prod"
+        }
+    }
+}

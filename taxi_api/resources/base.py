@@ -1,0 +1,21 @@
+__author__ = 'luiz'
+
+from flask_restful import Resource
+from taxi_api.helpers.helpers import Helpers
+
+
+class BaseResource(Resource):
+
+    _cfg = Helpers.load_config()
+    _ds_name = _cfg["api"]["database"]
+    _environ = _cfg["env"]
+
+    @staticmethod
+    def register(api):
+        pass
+
+    def return_exception(self, e, code):
+        return self.return_message(e.message or e.args[1], code)
+
+    def return_message(self, msg, code):
+        return {"message": msg}, code
