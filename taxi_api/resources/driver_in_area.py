@@ -33,6 +33,14 @@ class DriverInArea(BaseResource):
                 "allowMultiple": False,
                 "dataType": "string",
                 "paramType": "query"
+            },
+            {
+                "name": "api_token",
+                "description": "API access token",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "string",
+                "paramType": "header"
             }
         ],
         responseMessages=[
