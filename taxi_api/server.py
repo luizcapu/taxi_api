@@ -1,15 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 __author__ = 'luiz'
+
+import os
+import argparse
 
 from flask import Flask
 from flask.ext.restful import Api
 from flask_restful_swagger import swagger
+
 import resources
 from helpers.helpers import Helpers
-from init_db import run_main as run_init_db
-import os
+from taxi_api.init_db import run_main as run_init_db
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--env", type=str, default="test",
+                        help="Environment to run (prod|test). Default: test")
+    args = parser.parse_args()
+    os.environ["api_env"] = args.env
 
     if not os.environ.get("db_loaded", None):
         run_init_db()
