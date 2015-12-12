@@ -9,7 +9,7 @@ from flask_restful import reqparse
 parser = reqparse.RequestParser()
 parser.add_argument('status', required=True, type=str, help='JSON string representation of driver status')
 
-@swagger.swagger_endpoint()
+
 class Driver(BaseResource):
     _driver_bus = DriverBus(BaseResource._ds_name, BaseResource._environ)
 
@@ -27,6 +27,7 @@ class Driver(BaseResource):
             }
         ]
     )
+    @BaseResource._user_auth.login_required
     def get(self, driver_id):
         try:
             driver_to = Driver._driver_bus.get_by_pk(driver_id)
@@ -65,12 +66,14 @@ class Driver(BaseResource):
             }
         ]
     )
+    @BaseResource._driver_auth.login_required
     def post(self, driver_id):
         try:
             args = parser.parse_args()
             status = json.loads(args.status)
             status["driver_id"] = driver_id
-            Driver._driver_bus.save(status)
+            # call update_if_exists to ensure its a driver
+            Driver._driver_bus.update_if_exists(status)
         except Exception as e:
             return self.return_exception(e, 500)
 

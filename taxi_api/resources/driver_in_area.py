@@ -42,6 +42,7 @@ class DriverInArea(BaseResource):
             }
         ]
     )
+    @BaseResource._user_auth.login_required
     def get(self):
         try:
             args = parser.parse_args()

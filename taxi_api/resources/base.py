@@ -2,6 +2,7 @@ __author__ = 'luiz'
 
 from flask_restful import Resource
 from taxi_api.helpers.helpers import Helpers
+from taxi_api.helpers.api_auth import ApiAuth
 
 
 class BaseResource(Resource):
@@ -9,6 +10,10 @@ class BaseResource(Resource):
     _cfg = Helpers.load_config()
     _ds_name = _cfg["api"]["database"]
     _environ = _cfg["env"]
+
+    _driver_auth = ApiAuth(role="driver")
+    _passenger_auth = ApiAuth(role="passenger")
+    _user_auth = ApiAuth()
 
     @staticmethod
     def register(api):

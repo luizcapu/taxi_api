@@ -5,9 +5,15 @@ from flask.ext.restful import Api
 from flask_restful_swagger import swagger
 import resources
 from helpers.helpers import Helpers
+from init_db import run_main as run_init_db
+import os
 
 
 if __name__ == '__main__':
+
+    if not os.environ.get("db_loaded", None):
+        run_init_db()
+        os.environ["db_loaded"] = "y"
 
     cfg = Helpers.load_config()
     api_cfg = cfg["api"]
@@ -22,7 +28,8 @@ if __name__ == '__main__':
                        api_spec_url='/api/spec',
                        description='99taxis API Project')
 
-    _resources = [resources.Driver, resources.DriverInArea]
+    _resources = [
+        resources.Driver, resources.DriverInArea, resources.UserCreate]
 
     for _res in _resources:
         _res.register(api)

@@ -35,6 +35,13 @@ class BaseBus(object):
 
         return self.dao.save(to_obj, **args)
 
+    # Write the record, ONLY if it exists.
+    def update_if_exists(self, to_obj, **args):
+        if isinstance(to_obj, dict):
+            to_obj = self.to_class(**to_obj)
+
+        return self.dao.update_if_exists(to_obj, **args)
+
     # Create a record, ONLY if it doesn't exist.
     def create(self, to_obj, **args):
         if isinstance(to_obj, dict):

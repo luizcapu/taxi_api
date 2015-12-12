@@ -22,6 +22,10 @@ class BaseDao(object):
         pass
 
     @abstractmethod
+    def update_if_exists(self, to_obj, **args):
+        pass
+
+    @abstractmethod
     def save_if_up_to_date(self, to_obj, **kwargs):
         pass
 

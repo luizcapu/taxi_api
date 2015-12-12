@@ -34,8 +34,11 @@ class DBBaseDao(BaseDao):
 
         # call serialize BEFORE _build_pk
         _serialized = to_obj.serialize()
-        # active upsert
-        doc_body = dict(doc=_serialized, upsert=_serialized)
+        doc_body = dict(doc=_serialized)
+
+        # check upsert
+        if kwargs.pop("upsert", True):
+            doc_body["upsert"] =_serialized
 
         rec_id = kwargs.get("rec_id")
         if rec_id is None:
@@ -54,6 +57,10 @@ class DBBaseDao(BaseDao):
                 self._log_exception(*e.args)
                 return None
             raise
+
+    def update_if_exists(self, to_obj, **kwargs):
+        kwargs["upsert"] = False
+        return self.save(to_obj, **kwargs)
 
     def save_if_up_to_date(self, to_obj, **kwargs):
         if "version" in kwargs.keys():

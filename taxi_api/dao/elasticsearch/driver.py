@@ -1,7 +1,7 @@
 __author__ = 'luiz'
 
 from base import DBBaseDao
-from ...to.driver import DriverTO
+from taxi_api.to.driver import DriverTO
 
 
 class DriverDao(DBBaseDao):

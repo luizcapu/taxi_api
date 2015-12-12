@@ -6,11 +6,11 @@ from taxi_api.ds_provider.ds_provider import DSProvider
 import os
 
 
-if __name__ == '__main__':
+def run_main():
     cfg = Helpers.load_config()
     db_cfg = Helpers.load_ds_config()
 
-    ds_provider = DSProvider().get()
+    ds_provider = DSProvider.get()
     datasource = ds_provider.get_data_source(cfg["api"]["database"], cfg["env"])
 
     # load database class and create database
@@ -35,3 +35,6 @@ if __name__ == '__main__':
             dao_obj = clazz(ds_provider, datasource)
             dao_obj.create_table(**db_cfg)
     print "Database created !"
+
+if __name__ == '__main__':
+    run_main()

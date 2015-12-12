@@ -6,6 +6,11 @@ import uuid
 
 class Field(object):
     def __init__(self, **kwargs):
+        self._available_options = kwargs.get('options', None)
+        if self._available_options:
+            if not isinstance(self._available_options, list) or len(self._available_options) == 0:
+                raise ValueError("Options must be a non empty list")
+
         self.name = self.__class__.__name__
 
         self.pk = kwargs.get('pk', False)
@@ -28,6 +33,9 @@ class Field(object):
     def validate(self, value):
         if value is None and not self.null:
             raise ValueError("%s can't be None" % self.name)
+        if self._available_options and not value in self._available_options:
+            raise ValueError('%s value is not present in options %s ' % (
+                self.name, self._available_options))
 
     @classmethod
     def serialize(cls, value):
@@ -43,7 +51,6 @@ class Field(object):
 class StringField(Field):
     def __init__(self, **kwargs):
         super(StringField, self).__init__(**kwargs)
-
         self.max_length = kwargs.get('max_length', None)
 
     def validate(self, value, **kwargs):
