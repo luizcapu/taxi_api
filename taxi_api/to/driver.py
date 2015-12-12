@@ -6,7 +6,7 @@ import fields
 
 class DriverTO(TO):
 
-    driver_id = fields.IntegerField(pk=1)
+    driver_id = fields.StringField(pk=1)
     location = fields.GeoPointField()
     available = fields.BooleanField()
 

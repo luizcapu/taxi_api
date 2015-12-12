@@ -52,18 +52,10 @@ class BaseBus(object):
             return to_obj, True
         return self.get_by_pk(to_obj.pk), False
 
-    # semantics for those are not really well defined
-    # def replace(self, to_obj, **args):
-    #     if isinstance(to_obj, dict):
-    #         to_obj = self.to_class(**to_obj)
-    #
-    #     return self.dao.replace(to_obj, **args)
-    #
-    # def save_ignore(self, to_obj, **args):
-    #     if isinstance(to_obj, dict):
-    #         to_obj = self.to_class(**to_obj)
-    #
-    #     return self.dao.save_ignore(to_obj, **args)
+    def replace(self, to_obj, **args):
+        if isinstance(to_obj, dict):
+            to_obj = self.to_class(**to_obj)
+        return self.dao.replace(to_obj, **args)
 
     def delete(self, to_obj, **args):
         return self.dao.delete(to_obj, **args)
@@ -84,7 +76,6 @@ class BaseBus(object):
 
     def search_by_field_range_steps(self, field_to_search, initial_range, final_range, step, inner_range,
                                     *fields, **args):
-
         def iterate():
             _start = initial_range
             while _start <= final_range:
@@ -98,8 +89,12 @@ class BaseBus(object):
 
         return chain.from_iterable(iterate())
 
-    def search_by_field_value_range(self, field_to_search, value, initial_range, final_range, step, *fields, **args):
+    def save_if_up_to_date(self, to_obj, **kwargs):
+        if isinstance(to_obj, dict):
+            to_obj = self.to_class(**to_obj)
+        return self.dao.save_if_up_to_date(to_obj, **kwargs)
 
+    def search_by_field_value_range(self, field_to_search, value, initial_range, final_range, step, *fields, **args):
         def iterate():
             _start = initial_range
             while _start <= final_range:

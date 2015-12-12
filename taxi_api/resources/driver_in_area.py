@@ -15,6 +15,7 @@ class DriverInArea(BaseResource):
     _driver_bus = DriverBus(BaseResource._ds_name, BaseResource._environ)
 
     @swagger.operation(
+        nickname='driver_in_area',
         notes='Retrieve a list of available drivers in a given geo rectangle (nw/se geo points). Geo point must have "lat" and "lon" keys. i.e.: {"lat":40.730, "lon":-73.989}',
         parameters=[
             {

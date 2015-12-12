@@ -9,11 +9,12 @@ from flask_restful import reqparse
 parser = reqparse.RequestParser()
 parser.add_argument('status', required=True, type=str, help='JSON string representation of driver status')
 
-
+@swagger.swagger_endpoint()
 class Driver(BaseResource):
     _driver_bus = DriverBus(BaseResource._ds_name, BaseResource._environ)
 
     @swagger.operation(
+        nickname='get_driver_status',
         notes='Retrieve driver status for a given driver_id',
         responseMessages=[
             {
@@ -29,7 +30,6 @@ class Driver(BaseResource):
     def get(self, driver_id):
         try:
             driver_to = Driver._driver_bus.get_by_pk(driver_id)
-
             if driver_to:
                 return driver_to.serialize()
             else:
@@ -38,11 +38,12 @@ class Driver(BaseResource):
             return self.return_exception(e, 500)
 
     @swagger.operation(
+        nickname='set_driver_status',
         notes='Save driver status',
         parameters=[
             {
                 "name": "status",
-                "description": "JSON string representation of driver status",
+                "description": 'JSON string representation of driver status. i.e: {"available":true,"location":{"lat":20,"lon":30}}',
                 "required": True,
                 "allowMultiple": False,
                 "dataType": "string",
@@ -75,4 +76,4 @@ class Driver(BaseResource):
 
     @staticmethod
     def register(api):
-        api.add_resource(Driver, '/driver/<int:driver_id>/status', endpoint="driver")
+        api.add_resource(Driver, '/driver/<string:driver_id>/status', endpoint="driver")

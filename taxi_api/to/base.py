@@ -3,7 +3,7 @@ from binascii import hexlify
 from uuid import uuid4
 
 from fields import Field, StringField
-from ..helpers.helpers import Helpers
+from taxi_api.helpers.helpers import Helpers
 from itertools import chain
 
 

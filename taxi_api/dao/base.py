@@ -13,15 +13,16 @@ class BaseDao(object):
         self.ds_provider = ds_provider
         self.data_source = data_source
 
-        #self.database = str(self.data_source.config["databases"].get(self._default_table,
-                                                                     #self.data_source.config["databases"]["default"]))
-
     @abstractmethod
     def _record_to_to(self, record):
         pass
 
     @abstractmethod
     def save(self, to_obj, **kwargs):
+        pass
+
+    @abstractmethod
+    def save_if_up_to_date(self, to_obj, **kwargs):
         pass
 
     @abstractmethod
