@@ -16,6 +16,16 @@ class Driver(BaseResource):
     @swagger.operation(
         nickname='get_driver_status',
         notes='Retrieve driver status for a given driver_id',
+        parameters=[
+            {
+                "name": "api_token",
+                "description": "API access token",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "string",
+                "paramType": "header"
+            }
+        ],
         responseMessages=[
             {
                 "code": 201,

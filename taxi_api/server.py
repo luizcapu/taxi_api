@@ -29,7 +29,8 @@ if __name__ == '__main__':
                        description='99taxis API Project')
 
     _resources = [
-        resources.Driver, resources.DriverInArea, resources.UserCreate]
+        resources.Driver, resources.DriverInArea, resources.UserCreate,
+        resources.UserLogin, resources.UserLogout]
 
     for _res in _resources:
         _res.register(api)
