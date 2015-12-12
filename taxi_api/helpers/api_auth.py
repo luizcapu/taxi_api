@@ -31,4 +31,5 @@ class ApiAuth(object):
         user_to = ApiAuth._session_bus.get_user_from_session(api_token)
         if not user_to or (self.role and user_to.role != self.role):
             return
+        setattr(request, "current_user", user_to)
         return user_to

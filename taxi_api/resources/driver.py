@@ -4,7 +4,7 @@ import json
 from flask_restful_swagger import swagger
 from base import BaseResource
 from taxi_api.business.driver import DriverBus
-from flask_restful import reqparse
+from flask_restful import reqparse, request
 
 parser = reqparse.RequestParser()
 parser.add_argument('status', required=True, type=str, help='JSON string representation of driver status')
@@ -79,6 +79,9 @@ class Driver(BaseResource):
     @BaseResource._driver_auth.login_required
     def post(self, driver_id):
         try:
+            # current_user attr was injected in login_required method
+            if request.current_user.user_id != driver_id:
+                raise Exception("You can't set status of another person")
             args = parser.parse_args()
             status = json.loads(args.status)
             status["driver_id"] = driver_id
