@@ -2,6 +2,7 @@ __author__ = 'luiz'
 
 from base import BaseBus
 from taxi_api.helpers.exceptions import UserHasActiveRequest
+from taxi_api.helpers.helpers import Helpers
 
 
 class RequestDriverBus(BaseBus):
@@ -26,4 +27,15 @@ class RequestDriverBus(BaseBus):
         if len(active_requests) > 0:
             raise UserHasActiveRequest()
 
-        return self.create(to_obj, **args)
+        result = self.create(to_obj, **args)
+        try:
+            # send message to external service to find and notify drivers
+            # to meet the request
+            Helpers.dispatch(
+                "find_and_notify_drivers",
+                "New driver request: %s" % result.serialize()
+            )
+            return result
+        except Exception as e:
+            self.cancel_active_requests(to_obj.requester_id)
+            raise e
