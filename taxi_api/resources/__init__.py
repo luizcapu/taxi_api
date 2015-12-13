@@ -6,3 +6,4 @@ from user_create import UserCreate
 from user_login import UserLogin
 from user_logout import UserLogout
 from request_driver import RequestDriver
+from request_history import RequestHistory

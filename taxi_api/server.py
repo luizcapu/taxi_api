@@ -42,7 +42,8 @@ if __name__ == '__main__':
 
     _resources = [
         resources.Driver, resources.DriverInArea, resources.UserCreate,
-        resources.UserLogin, resources.UserLogout, resources.RequestDriver,]
+        resources.UserLogin, resources.UserLogout, resources.RequestDriver,
+        resources.RequestHistory]
 
     for _res in _resources:
         _res.register(api)

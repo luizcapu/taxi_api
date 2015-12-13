@@ -16,8 +16,8 @@ class RequestDriver(BaseResource):
     _request_driver_bus = RequestDriverBus(BaseResource._ds_name, BaseResource._environ)
 
     @swagger.operation(
-        nickname='list_user_driver_requests',
-        notes='List all driver requests of the user',
+        nickname='get_user_active_request',
+        notes="Get current user's active request",
         parameters=[
             {
                 "name": "api_token",
@@ -30,6 +30,10 @@ class RequestDriver(BaseResource):
         ],
         responseMessages=[
             {
+                "code": 201,
+                "message": "No active requests found."
+            },
+            {
                 "code": 500,
                 "message": "Exception during execution"
             }
@@ -38,12 +42,17 @@ class RequestDriver(BaseResource):
     @BaseResource._user_auth.login_required
     def get(self):
         try:
-            return [
-                r.serialize()
-                for r in
-                RequestDriver._request_driver_bus.search_by_field_value(
-                    "requester_id", request.current_user.user_id)
-            ]
+            active_requests = list(
+                RequestDriver._request_driver_bus.list_active_per_user(
+                    request.current_user.user_id))
+            if active_requests:
+                return [
+                    r.serialize()
+                    for r in
+                    active_requests
+                ]
+            else:
+                return self.return_message("No active requests found", 201)
         except Exception as e:
             return self.return_exception(e, 500)
 
