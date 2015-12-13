@@ -7,7 +7,7 @@
     },
     "datasources": {
         "elasticsearch": {
-            "hosts": ["http://127.0.0.1:9200"],
+            "hosts": ["http://172.31.47.162:9200"],
             "index": "api_prod"
         }
     }
