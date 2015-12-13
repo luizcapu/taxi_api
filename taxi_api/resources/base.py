@@ -3,7 +3,7 @@ __author__ = 'luiz'
 from flask_restful import Resource
 from taxi_api.helpers.helpers import Helpers
 from taxi_api.helpers.api_auth import ApiAuth
-
+import traceback
 
 class BaseResource(Resource):
 
@@ -20,6 +20,7 @@ class BaseResource(Resource):
         pass
 
     def return_exception(self, e, code):
+        print e
         return self.return_message(e.message or e.args[1], code)
 
     def return_message(self, msg, code):

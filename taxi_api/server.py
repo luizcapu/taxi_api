@@ -34,7 +34,7 @@ if __name__ == '__main__':
     app.config['BUNDLE_ERRORS'] = True
     api = swagger.docs(Api(app),
                        apiVersion=api_cfg["version"],
-                       basePath='http://%s:%s' % (api_cfg["host"], api_cfg["port"]),
+                       basePath='http://127.0.0.1:%i' % api_cfg["port"],
                        resourcePath='/',
                        produces=["application/json", "text/html"],
                        api_spec_url='/api/spec',
@@ -48,5 +48,5 @@ if __name__ == '__main__':
     for _res in _resources:
         _res.register(api)
 
-    app.run(debug=cfg["env"] != "prod")
+    app.run(debug=cfg["env"] != "prod", host=api_cfg["host"], port=api_cfg["port"])
 
