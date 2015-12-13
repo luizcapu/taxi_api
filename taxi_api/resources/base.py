@@ -20,7 +20,7 @@ class BaseResource(Resource):
         pass
 
     def return_exception(self, e, code):
-        print e
+        print traceback.print_last()
         return self.return_message(e.message or e.args[1], code)
 
     def return_message(self, msg, code):
