@@ -68,9 +68,15 @@ class BaseBus(object):
         return self.dao.delete(to_obj, **args)
 
     def search_by_field_value(self, field_to_search, value_to_search, *fields, **args):
-        search_field = self.to_class.get_field(field_to_search)
-        search_field.validate(value_to_search)
-        value_to_search = search_field.serialize(value_to_search)
+        if isinstance(field_to_search, list) and isinstance(value_to_search, list):
+            for i in xrange(0, len(field_to_search)):
+                search_field = self.to_class.get_field(field_to_search[i])
+                search_field.validate(value_to_search[i])
+                value_to_search[i] = search_field.serialize(value_to_search[i])
+        else:
+            search_field = self.to_class.get_field(field_to_search)
+            search_field.validate(value_to_search)
+            value_to_search = search_field.serialize(value_to_search)
         return self.dao.search_by_field_value(field_to_search, value_to_search, *fields, **args)
 
     def search_by_field_range(self, field_to_search, initial_range, final_range, *fields, **args):

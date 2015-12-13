@@ -29,13 +29,33 @@ class Field(object):
 
         self.index = kwargs.get('index', False)
         self.store = kwargs.get('store', True)
+        self.default = kwargs.get('default', None)
+        self.default_args = kwargs.get('default_args', None)
+        self.default_kwargs = kwargs.get('default_kwargs', None)
+
+    def _get_default_value(self):
+        if callable(self.default):
+            if self.default_args:
+                if self.default_kwargs:
+                    return self.default(*self.default_args, **self.default_kwargs)
+                else:
+                    return self.default(**self.default_kwargs)
+            elif self.default_kwargs:
+                return self.default(**self.default_kwargs)
+            else:
+                return self.default()
+        else:
+            return self.default
 
     def validate(self, value):
+        if value is None and self.default:
+            value = self._get_default_value()
         if value is None and not self.null:
             raise ValueError("%s can't be None" % self.name)
         if self._available_options and not value in self._available_options:
             raise ValueError('%s value is not present in options %s ' % (
                 self.name, self._available_options))
+        return value
 
     @classmethod
     def serialize(cls, value):
@@ -54,7 +74,7 @@ class StringField(Field):
         self.max_length = kwargs.get('max_length', None)
 
     def validate(self, value, **kwargs):
-        super(StringField, self).validate(value)
+        value = super(StringField, self).validate(value)
         if value is None:
             return
 
@@ -65,6 +85,7 @@ class StringField(Field):
         if self.max_length and len(value) > self.max_length:
             raise ValueError('%s has length %s which is bigger than %s' % (
                 self.name, len(value), self.max_length))
+        return value
 
 
 class UUIDField(Field):
@@ -72,12 +93,13 @@ class UUIDField(Field):
         super(UUIDField, self).__init__(**kwargs)
 
     def validate(self, value, name=None, **kwargs):
-        super(UUIDField, self).validate(value)
+        value = super(UUIDField, self).validate(value)
         if value is None:
             return
         if not isinstance(value, (uuid.UUID)):
             raise ValueError('%s is from type %s and not (uuid) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
     def serialize(self, value):
         return str(value)
@@ -90,7 +112,7 @@ class IntegerField(Field):
         self.max = kwargs.get('max', None)
 
     def validate(self, value, name=None, **kwargs):
-        super(IntegerField, self).validate(value)
+        value = super(IntegerField, self).validate(value)
         if value is None:
             return
 
@@ -109,6 +131,7 @@ class IntegerField(Field):
                 raise ValueError(
                     "the value %s assigned to %s is greater than the maximum allowed, max: %s" % (
                         value, self.name, self.max))
+        return value
 
 
 class FloatField(Field):
@@ -116,13 +139,14 @@ class FloatField(Field):
         super(FloatField, self).__init__(**kwargs)
 
     def validate(self, value, name=None, **kwargs):
-        super(FloatField, self).validate(value)
+        value = super(FloatField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, (float)):
             raise ValueError('%s is from type %s and not (float) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
 
 class BooleanField(Field):
@@ -130,13 +154,14 @@ class BooleanField(Field):
         super(BooleanField, self).__init__(**kwargs)
 
     def validate(self, value, name=None, **kwargs):
-        super(BooleanField, self).validate(value)
+        value = super(BooleanField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, (bool)):
             raise ValueError('%s is from type %s and not (bool) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
 
 class ListField(Field):
@@ -144,13 +169,14 @@ class ListField(Field):
         super(ListField, self).__init__(**kwargs)
 
     def validate(self, value, **kwargs):
-        super(ListField, self).validate(value)
+        value = super(ListField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, (list)):
             raise ValueError('%s is from type %s and not (list) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
 
 class SetField(Field):
@@ -158,13 +184,14 @@ class SetField(Field):
         super(SetField, self).__init__(**kwargs)
 
     def validate(self, value, **kwargs):
-        super(SetField, self).validate(value)
+        value = super(SetField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, (set, frozenset)):
             raise ValueError('%s is from type %s and not (set, frozenset) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
     @classmethod
     def serialize(cls, value):
@@ -182,17 +209,19 @@ class DictField(Field):
         super(DictField, self).__init__(**kwargs)
 
     def validate(self, value, name=None, **kwargs):
-        super(DictField, self).validate(value)
+        value = super(DictField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, dict):
             raise ValueError('%s is from type %s and not (dict) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
 
 class DateTimeField(Field):
     RESOLUTION = timedelta(milliseconds=1)
+    DEFAULT_FORMAT = "%Y-%m-%dT%H:%M:%S"
     REGEXP = re.compile(
         r"^(?P<year>\d{4})-?(?P<month>\d{2})-?(?P<day>\d{2})(( |T)?"
         r"(?P<hour>\d{2}):?(?P<min>\d{2}):?(?P<sec>\d{2})\.?(?P<us>\d+)?)?$")
@@ -201,57 +230,29 @@ class DateTimeField(Field):
         super(DateTimeField, self).__init__(**kwargs)
 
     def validate(self, value, **kwargs):
-        super(DateTimeField, self).validate(value)
+        value = super(DateTimeField, self).validate(value)
         if value is None:
             return
 
         if not isinstance(value, datetime):
             raise ValueError('%s is from type %s and not (datetime) ' % (
                 self.name, value.__class__.__name__))
+        return value
 
     @classmethod
     def serialize(cls, value):
         if value is None:
-            return value
-        return long(value.strftime("%Y%m%d%H%M%S%f")[:-3])
+            return
+        return value.strftime(cls.DEFAULT_FORMAT)
 
     @classmethod
     def deserialize(cls, value):
-        """ deserialize value for 2015-04-01 13:25:22 or 2015-04-01 or 2015-05-25T10:43:03.485141 or 20150601131522"""
-        try:
-            # fast path
-            if isinstance(value, (int, long)) and 19000000000000000 <= value < 30000000000000000:
-                value, millisecond = divmod(value, 1000)
-                value, second = divmod(value, 100)
-                value, minute = divmod(value, 100)
-                value, hour = divmod(value, 100)
-                value, day = divmod(value, 100)
-                year, month = divmod(value, 100)
-                return datetime(year, month, day, hour, minute, second, millisecond * 1000)
-        except:
-            pass
-        # fallback
-        match = cls.REGEXP.search(str(value))
-        matches = match.groupdict()
-        if matches["hour"] and matches["min"] and matches["sec"]:
-            if matches["us"]:
-                us = int(matches["us"]) * (10 ** (6 - len(matches["us"])))
-                return datetime(int(matches["year"]),
-                                int(matches["month"]),
-                                int(matches["day"]),
-                                int(matches["hour"]),
-                                int(matches["min"]),
-                                int(matches["sec"]),
-                                us)
-            else:
-                return datetime(int(matches["year"]),
-                                int(matches["month"]),
-                                int(matches["day"]),
-                                int(matches["hour"]),
-                                int(matches["min"]),
-                                int(matches["sec"]))
-        return datetime(int(matches["year"]), int(matches["month"]),
-                        int(matches["day"]), 0, 0, 0)
+        if isinstance(value, basestring):
+            return datetime.strptime(value, cls.DEFAULT_FORMAT)
+        elif isinstance(value, datetime):
+            return value
+        else:
+            raise ValueError("Unknown %s type to deserialize" % value.__class__.__name__)
 
     def now(self):
         return datetime.utcnow().isoformat()
@@ -263,7 +264,7 @@ class GeoPointField(Field):
         super(GeoPointField, self).__init__(**kwargs)
 
     def validate(self, value, **kwargs):
-        super(GeoPointField, self).validate(value)
+        value = super(GeoPointField, self).validate(value)
         if value is None:
             return
 
@@ -280,6 +281,7 @@ class GeoPointField(Field):
             if len(value) != 2:
                 raise ValueError('%s must be a tuple/list with two entries (lat, lon)' % (
                     self.name))
+        return value
 
     @classmethod
     def serialize(cls, value):
@@ -296,11 +298,11 @@ class GeoPointField(Field):
         if value is None:
             return value
         elif isinstance(value, dict):
-            return (value["lat"], value["lon"])
+            return value["lat"], value["lon"]
         elif isinstance(value, list):
-            return (value[0], value[1])
+            return value[0], value[1]
         elif isinstance(value, tuple):
-            return (value[0], value[1])
+            return value[0], value[1]
         else:
             raise ValueError('Unknown type %s to deserialize ' % (
                 value.__class__.__name__))

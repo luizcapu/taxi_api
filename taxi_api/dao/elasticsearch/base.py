@@ -185,12 +185,20 @@ class DBBaseDao(BaseDao):
         raise NotImplementedError("get_all disabled")
 
     def search_by_field_value(self, field_to_search, value_to_search, *fields, **kwargs):
+
+        must = []
+        if isinstance(field_to_search, list) and isinstance(value_to_search, list):
+            for i in xrange(0, len(field_to_search)):
+                must.append({"term": {field_to_search[i]: value_to_search[i]}})
+        else:
+            must.append({"term": {field_to_search: value_to_search}})
+
         query = {
             "query": {
                 "filtered": {
                     "filter": {
-                        "term": {
-                            field_to_search: value_to_search
+                        "bool": {
+                            "must": must
                         }
                     }
                 }
@@ -261,7 +269,7 @@ class DBBaseDao(BaseDao):
         mappings = dict(properties=properties)
 
         for field in self._to_class._fields.itervalues():
-            if isinstance(field, Field):
+            if isinstance(field, Field) and field.store:
                 properties[field.name] = self._get_field_mapping(field)
 
         conn.indices.put_mapping(

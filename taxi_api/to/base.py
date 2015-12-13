@@ -109,7 +109,7 @@ class TO(object):
         values = self._values
         for key, value in kwargs.iteritems():
             if key in self._fields:
-                values[key] = value
+                values[key] = self._fields[key].deserialize(value)
 
     @classmethod
     def deserialize(cls, data):
@@ -137,8 +137,7 @@ class TO(object):
             if fields_to_ignore and name in fields_to_ignore:
                 continue
             value = values.get(name)
-            field.validate(value)
-            s_value = field.serialize(value)
+            s_value = field.serialize(field.validate(value))
             if field.store and (s_value is not None or field.store_null):
                 data[name] = s_value
         return data
