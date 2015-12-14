@@ -19,6 +19,11 @@ class RequestDriverBus(BaseBus):
     def cancel_active_requests(self, requester_id):
         for request in self.list_active_per_user(requester_id):
             request.status = "canceled"
+            if hasattr(request, "driver_id") and request.driver_id:
+                Helpers.dispatch(
+                    "notify_driver_request_canceled",
+                    "Request canceled: %s" % request.serialize()
+                )
             self.save(request)
 
     def assign_driver(self, request_id, driver_id):
