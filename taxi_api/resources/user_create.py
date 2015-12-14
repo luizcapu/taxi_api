@@ -4,7 +4,7 @@ import json
 from flask_restful_swagger import swagger
 from base import BaseResource
 from taxi_api.business.user import UserBus
-from flask_restful import reqparse
+from flask_restful import reqparse, request
 
 parser = reqparse.RequestParser()
 parser.add_argument('user', required=True, type=str, help='JSON string representation of user')
@@ -17,6 +17,14 @@ class UserCreate(BaseResource):
         nickname='user_create',
         notes='Create a new user in platform',
         parameters=[
+            {
+                "name": "app_access_key",
+                "description": 'Client app access key to consume user creation (Please, use default key "test_key")',
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "string",
+                "paramType": "header"
+            },
             {
                 "name": "user",
                 "description": 'JSON string representation of user. i.e: {"name": "Luiz", "car_plate": "ABC-1234", "role": "driver", "password": "my_pass", "email": "luizcapu@gmail.com"}',
@@ -33,6 +41,7 @@ class UserCreate(BaseResource):
             }
         ]
     )
+    @BaseResource._user_auth.app_key_required
     def post(self):
         try:
             args = parser.parse_args()

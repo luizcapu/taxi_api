@@ -14,6 +14,14 @@ class UserLogin(BaseResource):
         notes='Login user in platform',
         parameters=[
             {
+                "name": "app_access_key",
+                "description": 'Client app access key to consume user creation (Please, use default key "test_key")',
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "string",
+                "paramType": "header"
+            },
+            {
                 "name": "username",
                 "description": 'User email',
                 "required": True,
@@ -37,6 +45,7 @@ class UserLogin(BaseResource):
             }
         ]
     )
+    @BaseResource._user_auth.app_key_required
     def post(self):
         try:
             login_result = UserLogin._user_bus.login(

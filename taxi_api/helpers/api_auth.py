@@ -24,6 +24,15 @@ class ApiAuth(object):
             rest_abort(401)
         return wrapper
 
+    def app_key_required(self, func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # TODO implement real app_access_key validation
+            if request.environ.get('HTTP_APP_ACCESS_KEY') == "test_key":
+                return func(*args, **kwargs)
+            rest_abort(401)
+        return wrapper
+
     def _validate_token(self):
         api_token = request.environ.get('HTTP_API_TOKEN')
         if not api_token:
