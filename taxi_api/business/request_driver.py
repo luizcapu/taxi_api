@@ -12,10 +12,22 @@ class RequestDriverBus(BaseBus):
         return self.search_by_field_value(
             ["requester_id", "status"], [requester_id, "active"])
 
+    def list_active_per_driver(self, driver_id):
+        return self.search_by_field_value(
+            ["driver_id", "status"], [driver_id, "active"])
+
     def cancel_active_requests(self, requester_id):
         for request in self.list_active_per_user(requester_id):
             request.status = "canceled"
             self.save(request)
+
+    def assign_driver(self, request_id, driver_id):
+        to_obj = self.get_by_pk(request_id)
+        if to_obj:
+            to_obj.driver_id = driver_id
+            return self.save_if_up_to_date(to_obj, **dict(version=1))
+        else:
+            raise Exception("Request not found")
 
     def create_request(self, to_obj, **args):
         if isinstance(to_obj, dict):

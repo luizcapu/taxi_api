@@ -139,6 +139,8 @@ class TO(object):
             value = values.get(name)
             s_value = field.serialize(field.validate(value))
             if field.store and (s_value is not None or field.store_null):
+                if field.pk and not hasattr(self, name):
+                    setattr(self, name, s_value)
                 data[name] = s_value
         return data
 

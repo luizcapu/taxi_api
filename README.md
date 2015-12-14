@@ -113,3 +113,5 @@ Your custom collector code MUST OBEY the collector interface BUT MUST NOT INHERI
 
 Collector interface can be found at [ROOT]/url_gather/collectors/collector_interface.py
 
+
+http://ec2-54-213-3-150.us-west-2.compute.amazonaws.com:5000/api/spec.html#!/spec/

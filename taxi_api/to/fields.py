@@ -30,6 +30,7 @@ class Field(object):
         self.index = kwargs.get('index', False)
         self.store = kwargs.get('store', True)
         self.default = kwargs.get('default', None)
+        self.default_cast = kwargs.get('default_cast', None)
         self.default_args = kwargs.get('default_args', None)
         self.default_kwargs = kwargs.get('default_kwargs', None)
 
@@ -37,15 +38,16 @@ class Field(object):
         if callable(self.default):
             if self.default_args:
                 if self.default_kwargs:
-                    return self.default(*self.default_args, **self.default_kwargs)
+                    result = self.default(*self.default_args, **self.default_kwargs)
                 else:
-                    return self.default(**self.default_kwargs)
+                    result = self.default(**self.default_kwargs)
             elif self.default_kwargs:
-                return self.default(**self.default_kwargs)
+                result = self.default(**self.default_kwargs)
             else:
-                return self.default()
+                result = self.default()
         else:
-            return self.default
+            result = self.default
+        return self.default_cast(result) if self.default_cast else result
 
     def validate(self, value):
         if value is None and self.default:

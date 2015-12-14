@@ -5,6 +5,7 @@ from elasticsearch.exceptions import ElasticsearchException, NotFoundError
 import logging
 from taxi_api.to.fields import *
 from taxi_api.helpers.helpers import Helpers
+from taxi_api.helpers.exceptions import OutDatedRecordException
 
 
 def add_defaults(properties, defaults):
@@ -32,6 +33,9 @@ class DBBaseDao(BaseDao):
     def save(self, to_obj, **kwargs):
         update_args = add_defaults(kwargs.get(self._UPDATE_ARGS_LABEL, {}), self._default_update_args)
 
+        if "version" in update_args:
+            update_args.pop("retry_on_conflict")
+
         # call serialize BEFORE _build_pk
         _serialized = to_obj.serialize()
         doc_body = dict(doc=_serialized)
@@ -56,6 +60,8 @@ class DBBaseDao(BaseDao):
             if e.__class__ in self._EXCEPTION_IGNORE_ON_WRITE:
                 self._log_exception(*e.args)
                 return None
+            if e.args[0] == 409:
+                raise OutDatedRecordException()
             raise
 
     def update_if_exists(self, to_obj, **kwargs):
