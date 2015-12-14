@@ -15,9 +15,10 @@ if [ ! -d /home/ubuntu/pyve1 ]
 then
     echo "*** Creating new python virtual env"
     virtualenv /home/ubuntu/pyve1
-    source /home/ubuntu/pyve1/bin/activate
-    ./install.sh
 fi
+
+source /home/ubuntu/pyve1/bin/activate
+./install.sh
 
 # install elasticsearch
 echo "*** Installing Elasticsearch"

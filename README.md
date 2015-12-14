@@ -1,9 +1,8 @@
 taxi_api
 ============
 
-== GOALS (Brazilian Portuguese)
+=== Objetivo
 
-Objetivo
 
 Implementar o backend de um aplicativo de smartphone que mostra um mapa com os taxistas ativos da 99Taxis. O sistema deve assumir que tem diversos taxistas cadastrados e permitir atualizar o status desses taxistas, consultar status deles e encontrar taxistas em uma dada área. Toda comunicação deve ser feita com JSON.
 
@@ -61,57 +60,52 @@ Objetivos Bonus:
 1. POST /drivers 
 '{"name":"Pedro","carPlate":"
 
-=== INSTALLATION
+=== INSTALAÇÃO
 
-1) Be sure your environment is read to run Python applications (https://www.python.org/about/gettingstarted/)
+Entre na pasta raiz do projeto e execute ./first_install.sh
 
-2) Recommended use of virtual environment (Brazilian Portuguese reference: https://osantana.me/ambiente-isolado-para-python-com-virtualenv/)
+A instalação automatizada foi testada em Ubuntu 14.04 LTS. Para rodar em outras distribuições talvez sejam necessárias adaptações no instalador.
 
-3) Run install.sh file found at the root of the project
+=== ATUALIZAÇÕES
+
+Para atualizar somente o código fonte após alguma alteração, entre na pasta raiz e execute ./install.sh
+
+Se estiver usando virtualenv (recomendado) não esqueça de ativá-la antes de rodar o install.
+
 
 === HELP OUTPUT
 
 ```
-usage: url_gather.py [-h] [-u URL] [-d DEPTH] [-w WORKERS]
-                     [-ae ACCEPTABLE_ERRORS] [-o OUT] [-cf COLLECTOR_FILE]
-                     [-cc COLLECTOR_CLASS]
+usage: server.py [-h] [-e ENV]
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -u URL, --url URL     Initial URL to gather
-  -d DEPTH, --depth DEPTH
-                        Gathering depth
-  -w WORKERS, --workers WORKERS
-                        Number of parallel workers
-  -ae ACCEPTABLE_ERRORS, --acceptable_errors ACCEPTABLE_ERRORS
-                        Max acceptable errors to continue execution
-                        (-1=disabled)
-  -o OUT, --out OUT     Folder to save output files
-  -cf COLLECTOR_FILE, --collector_file COLLECTOR_FILE
-                        Path to custom .py file to act as collector
-  -cc COLLECTOR_CLASS, --collector_class COLLECTOR_CLASS
-                        Class name of custom collector
+  -h, --help         show this help message and exit
+  -e ENV, --env ENV  Environment to run (prod|test). Default: test
 ```
 
 
-=== USAGE EXAMPLE
+=== EXEMPLO DE USO
 
 ```
-cd url_gather
-python url_gather.py -u http://g1.globo.com/ -d 1 -w 5 -o /tmp/
+./taxi_api/server.py -e prod
 ```
 
-USING A CUSTOM COLLECTOR
+=== APLICAÇÃO NA NUVEM
 
-```
-python url_gather.py -u http://g1.globo.com/ -cf ./collectors/test_custom_collector.py -cc TestCustomCollector
-```
+Uma instância do servidor está rodando no seguinte endereço: http://ec2-54-213-3-150.us-west-2.compute.amazonaws.com:5000
 
-=== IMPORTANT
-
-Your custom collector code MUST OBEY the collector interface BUT MUST NOT INHERIT from it.
-
-Collector interface can be found at [ROOT]/url_gather/collectors/collector_interface.py
+As documentações podem ser acessadas em: http://ec2-54-213-3-150.us-west-2.compute.amazonaws.com:5000/api/spec.html#!/spec/
 
 
-http://ec2-54-213-3-150.us-west-2.compute.amazonaws.com:5000/api/spec.html#!/spec/
+=== ALGORITMO ÓTIMO DE PROCURA DOS TAXISTAS
+
+[Descrição Textual](docs/driver_search_algo.pdf)
+[Esboço Implementação](taxi_api/helpers/driver_finder.py)
+
+=== AUTENTICAÇÃO NOS ENDPOINTS
+
+
+
+
+=== CRIAR OUTROS ENDPOINTS
+
