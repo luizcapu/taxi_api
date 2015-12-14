@@ -1,20 +1,20 @@
 99taxis API Project
 ============
 
-OBJETIVOS
+Objetivos
 -----
 
 [Descrição dos Objetivos](docs/goals.pdf)
 
 
-INSTALAÇÃO
+Instalação
 -----
 
 Entre na pasta raiz do projeto e execute ./first_install.sh
 
 A instalação automatizada foi testada em Ubuntu 14.04 LTS. Para rodar em outras distribuições talvez sejam necessárias adaptações no instalador.
 
-ATUALIZAÇÕES
+Atualizações
 -----
 
 Para atualizar somente o código fonte após alguma alteração, entre na pasta raiz e execute ./install.sh
@@ -22,7 +22,7 @@ Para atualizar somente o código fonte após alguma alteração, entre na pasta 
 Se estiver usando virtualenv (recomendado) não esqueça de ativá-la antes de rodar o install.
 
 
-HELP OUTPUT
+Help Output
 -----
 
 ```
@@ -34,14 +34,14 @@ optional arguments:
 ```
 
 
-EXEMPLO DE USO
+Exemplo de Uso
 -----
 
 ```
 ./taxi_api/server.py -e prod
 ```
 
-APLICAÇÃO NA NUVEM
+Aplicação na Nuvem
 -----
 
 Uma instância do servidor está rodando no seguinte endereço: 
@@ -54,7 +54,7 @@ As documentações podem ser acessadas em:
 http://ec2-54-213-3-150.us-west-2.compute.amazonaws.com:5000/api/spec.html#!/spec/
 
 
-ALGORITMO ÓTIMO DE PROCURA DOS TAXISTAS
+Algoritmo Ótimo de Procura dos Taxistas
 -----
 
 [Descrição Textual](docs/driver_search_algo.pdf)
@@ -62,13 +62,14 @@ ALGORITMO ÓTIMO DE PROCURA DOS TAXISTAS
 [Esboço Implementação](taxi_api/helpers/driver_finder.py)
 
 
-AUTENTICAÇÃO NOS ENDPOINTS
+Autenticação nos endpoints
 -----
 
+[Solução de Autenticação](docs/auth.pdf)
 
 
-
-CRIAR OUTROS ENDPOINTS
+Criar outros endpoints
 -----
 
+[endpoints adicionais](docs/endpoints.pdf)
 
