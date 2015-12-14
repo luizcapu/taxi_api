@@ -10,7 +10,6 @@ from flask import Flask
 from flask.ext.restful import Api
 from flask_restful_swagger import swagger
 
-import resources
 from helpers.helpers import Helpers
 from taxi_api.init_db import run_main as run_init_db
 
@@ -40,6 +39,7 @@ if __name__ == '__main__':
                        api_spec_url='/api/spec',
                        description='99taxis API Project')
 
+    import resources  # import resources after configure environment
     _resources = [
         resources.Driver, resources.DriverInArea, resources.UserCreate,
         resources.UserLogin, resources.UserLogout, resources.RequestDriver,

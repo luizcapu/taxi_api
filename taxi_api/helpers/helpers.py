@@ -39,7 +39,9 @@ class Helpers(object):
     @staticmethod
     def load_config(environment=None, force_reload=False):
         if environment is None:
+            print "env is None, getting from os.environ"
             environment = os.environ.get("api_env", "test")
+            print "env=", environment
         if not environment in Helpers._loaded_configs.keys() or force_reload:
             # get location of cfg file
             base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
